@@ -257,3 +257,346 @@ Um pouco sobre módulos do ECMASCRIPT;
 Modelagem de uma Negociação em JavaScript;
 Buracos em nossa modelagem por limitações da linguagem JavaScript.
 
+#### 18/06/2024
+
+@02-Benefícios da tipagem estática
+
+@@01
+Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode baixar o projeto da aula anterior.
+Bons estudos!
+
+https://github.com/alura-cursos/typescript-curso-1/archive/77bd25ccbcd47816c64b4549a3602c165ac83eed.zip
+
+@@02
+Instalando o TypeScript
+
+[00:00] Vimos no vídeo do último capítulo, porque estamos trazendo do TypeScript para cá, qual o tipo de problema que o TypeScript pode resolver para nós, mas antes de eu falar sobre TypeScript, começarmos a codificar utilizando a linguagem TypeScript, precisamos instalar ele na nossa máquina, mais propriamente dito o compilador TypeScript.
+[00:23] Você pode pensar: "Flávio, compilador?". Segura um pouco, você vai entender, vamos só preparar a nossa infraestrutura para que eu possa avançar com vocês e vocês entenderem melhor essa relação de TypeScript, compilador e JavaScript.
+
+[00:36] Primeira coisa que você vai para fazer: se certificar que o terminal que você está trabalhando está parado, você para ele, "Ctrl + C", e agora vamos instalar a última linguagem, a última versão da linguagem TypeScript na data de criação desse treinamento, que é a versão 4.2.2. Vamos lá.
+
+[00:54] Eu vou fazer, como instalamos isso? Você vai escrever npm install typescript@4.2.2. Uma coisa importante é o seguinte: esse treinamento, claro, no futuro ele vai caducar, novas versões do TypeScript vão sair, mas utilize sempre a versão do estou utilizando aqui para que você não tenha nenhuma quebra de compatibilidade.
+
+[01:21] E, após terminar o curso, nada te impede de você fazer o upgrade da linguagem TypeScript e poder correr atrás se algo mudou, se algum detalhe mudou. Vamos usar essa versão aqui.
+
+[01:34] Eu vou colocar aqui -- save-dev. npm install typescript@4.2.2 --save-dev. Por quê? Porque essa é uma dependência do Node JS de desenvolvimento, não é algo que você vai levar para produção, por isso é --save-dev. Ao mesmo tempo, vou executar esse comando, eu vou deixar aberto o pack de JSON, que vamos ver que quando executar esse comando agora, olha, fiz esse comando.
+
+[02:12] Ele vai adicionar o TypeScript como uma dependência minha de desenvolvimento. Atualmente temos o lite-server e o concurrently, que é da infraestrutura do projeto que eu trouxe pronto para vocês, que não vale a pena ficarmos focando agora, vamos focar no TypeScript.
+
+[02:32] "Flávio, beleza, executei esse comando, ele está funcionando, estou maravilhado porque nenhum erro no console". Mas agora temos que começar a configurar, o TypeScript não fez Mãe de Diná para saber como você quer ele se comporte no seu projeto.
+
+[02:48] Então precisamos criar um arquivo que vamos ver no próximo vídeo, que é o TS Config JSON, é esse arquivo que podemos fazer o tweak, pode melhorar, pode deixar o TypeScript mais rígido, mais frouxo, dependendo da necessidade do projeto, e é isso que vamos ver no próximo vídeo.
+
+@@03
+Conhecendo arquivos TS
+
+[00:00] Temos o TypeScript instalado, precisamos configurar o compilador, mas antes de configurar o compilador eu quero fazer uma coisa com você. Por favor, vá até o arquivo "app.JS" e renomeie o arquivo para "app.ts", você vai na "negociação" vai renomear para "negociação.ts". Você tem dois aqui, um arquivo "negociação.ts" e "app.ts". "Flávio, o que é TS?", de TypeScript, esse não é o objetivo do nosso curso, escrever código no TypeScript?
+[00:39] Porém, no "app.ts", eu já tenho um erro que o Visual Studio Code está mostrando para mim, um erro muito interessante, porque é o seguinte: como eu renomeei de JavaScript para TS, o Visual Studio Code já tem uma integração com TypeScript e já está verificando se o seu código está correto ou não mesmo antes do compilador do TypeScript está configurado.
+
+[01:10] Olha que bacana, se você olhar para cá ele está dizendo que "negociação" espera três argumentos e você só passou um, ou seja, já tive uma indicação de erro aqui. Se eu escrevo negociacao.quantidade = 10, você vai ver que o Visual Studio Code integrado com o TypeScript já está me dizendo que não posso atribuir 10 a propriedade quantidade porque ela é somente leitura, é um getter.
+
+[01:46] Você já começa a ter uma informação visual de que seu código não está legal em tempo de desenvolvimento. Mas vamos fazer o seguinte: se eu tentar carregar esse código no navegador não vai funcionar, porque o navegador não entende a linguagem TypeScript, ele nem sabe o que é esse raio de ".ts".
+
+[02:07] Olha o que vamos fazer, muita calma nessa hora. Salve o seu arquivo se você ainda não salvou, deixa ele com erro, não se preocupa. Não estamos na pasta de "dist"? "Dist" é tudo que o navegador entende, é tudo JavaScript, então, em contrapartida, temos a pasta "app", e essa pasta "app" é a pasta que contém, que vai ter todos os nossos arquivos de TypeScript.
+
+[02:37] Olha o que vou fazer: o "negociação.ts" eu vou jogar lá para dentro de "models", o "app.js" eu vou jogar direto para "app" movi. Faz isso com calma, sem pressa nenhuma, o importante é entendermos isso aqui de maneira sólida. Se eu olho agora a minha pasta "app", ela tem "models", "negociação", e na raiz de "app", ela tem "app.ts". Ficou claro?
+
+[03:15] Agora lá na pasta "dist", olha o que você vai fazer, está vendo o arquivo dentro da pasta "dist", a pasta "model" está vazia, não tem mais o JS aqui, então o que acontece? Se eu abro o navegador agora, eu rodo o meu servidor, npm run server. Se eu abro ele, vou à aba network, ele não conseguiu encontrar o "app.js", porque ele não existe.
+
+[03:55] Então, você pode perguntar: "Flávio, como você resolve isso?". O que eu quero mostrar para vocês é o seguinte: todo código de TypeScript que formos escrever, vamos escrever dentro da pasta "app". Certo? Quando nosso código estiver pronto, nós vamos transformar esse código TypeScript em código JavaScript, e os arquivos que são compiladas do arquivo TypeScript cairão automaticamente dentro da pasta "dist".
+
+[04:32] Isso significa que vamos chegar um ponto que qualquer alteração que eu fizer nos meus arquivos em TypeScript automaticamente gerarão arquivos correspondentes na pasta "dist", porque, lembre-se: navegador não entende a linguagem TypeScript, ele entende JavaScript, então tem que haver uma tradução, tem que haver uma compilação. Ficou claro?
+
+[04:55] E de bandeja o Visual Studio Code já está nos dizendo que o nosso código não está legal. Eu não vou corrigir ainda, eu vou partir agora para a parte de compilação, porque precisamos que esses arquivos sejam compilados e apareçam dentro da pasta "dist".
+
+[05:13] Se você trabalha com Vue JS, já Angular JS, React, quem usa TypeScript, você vai ver que a estrutura é praticamente parecida, você tem uma pasta que você tem os arquivos de TypeScript, se você usa React ou TypeScript, por exemplo, e o resultado da compilação desses arquivos fica na pasta de distribuição.
+
+[05:34] Agora que você entendeu essa dinâmica de força, vamos como configurar o compilador para que os arquivos em TypeScript apareçam na pasta "dist" como arquivos JavaScript, para que ele passe por esse processo de compilação e é esse processo de compilação que nos permite veja erros em tempo de desenvolvimento.
+
+[05:55] Como se você tivesse trabalhando com a linguagem como Java, C#, porque o TypeScript é uma linguagem taticamente tipada, você tem que seguir regras, você tem tipos que você não pode ferir. Ficou claro? Vamos para o próximo vídeo configurar esse tal compilador e fazer essa coisa toda funcionar porque eu quero escrever código TypeScript.
+
+@@04
+Configuração básica do compilador
+
+[00:00] Você deve estar se perguntando: "Flávio, poxa, o Visual Studio Code já faz essa integração do TypeScript, para que eu preciso configurar o compilador do TypeScript?". Você precisa configurar o compilador porque o Visual Studio Code não vai gerar os arquivos, converter, compilar os arquivos TypeScript da pasta "app" e jogar dentro de "dist".
+[00:23] Você precisa fazer isso e se encarregar de fazer isso manualmente. Se você vai estudar Angular, React ou você vai trabalhar com Vue, você utiliza TypeScript por debaixo dos panos, tudo isso vai ser feito de maneira transparente, você não precisa se preocupar, mas aqui temos que entender o negócio a fundo.
+
+[00:41] Vamos lá. Primeira coisa é o seguinte: o centro nervoso lá do TypeScript é o arquivo "tsconfig.json", então dentro da pasta do seu projeto, você clicar aqui em "package.json", vai clicar aqui nesse sinal de "novo arquivo", você vai criar esse arquivo aqui, não pode errar o nome, é "tsconfig.json".
+
+[01:49] Ele tem que estar na raiz do seu projeto, aonde você está abrindo o Visual Studio Code, para que você consiga passar algumas configurações para o seu compilador TypeScript.
+
+[01:16] Primeira coisa que eu vou fazer é abrir essa chave, você não pode cometer nenhum nesse arquivo porque senão ele não vai funcionar, você vai saber isso de imediato, é só você voltar e verificar se você cometeu alguma gafe na hora de digitar nesse arquivo. O que vamos fazer? Isso aqui precisa estar em aspas duplas, eu já tenho o auto complete aqui, se sua ideia por acaso pifou e não estar fazendo auto complete é só você digitar o que eu vou fazer.
+
+[01:40] Primeira coisa que eu quero fazer é passar umas configurações de compilação, opções de compilação, que é compilerOptions. Que configurações são essas? A primeira que eu quero colocar qual é o diretório que eu vou considerar depois de eu ler os seus arquivos "ts" onde que eu vou gravar os arquivos resultantes. Sabemos que tudo que estar disponível para o navegador fica dentro da pasta "dist". Vou dizer que a "outDir": "dist/js".
+
+[02:23] Seguinte: quando você trabalha com o compilador TypeScript, você pode dizer para o TypeScript o seguinte: " TypeScript, quando você for converter os seus arquivos "ts", converte para o ECMAScript 5, porque eu tenho que dar suporte a IE8, IE9, ou transforma para o ECMAScript 6”.
+
+[02:41] Ou “transforma para o ECMAScript mais recente", você tem como configuração para o compilador TypeScript para ver em qual versão do JavaScript ele vai gerar esse código, essa transformação.
+
+[02:57] Eu não vou usar o mais moderno, vou usar para pegar tudo desde a versão do ECMAScript 6, que, se não me engano, é desde 2015, a versão 2015 do JavaScript. Vou dizer que o "target:, ele botou ES3, mas eu dou "Ctrl + Espaço", tem várias opções aqui, o que eu vou usar aqui é o ES6.
+
+[03:21] Eu quero que ele converta todo o código JavaScript com a linguagem JavaScript na versão do ECMAScript 6. Posso até colocar 5, eu vou fazer um teste depois gerando é ES6, ES5 para vocês verem a diferença no final.
+
+[03:40] Agora é o seguinte: " programador, você diz que você quer que eu gere os arquivos na pasta "dist", que converta os arquivos TypeScript para ECMAScript 6, mas qual é os arquivos, onde estão os arquivos que você quer que eu leia?" Os arquivos que eu quero que você considere estão dentro da pasta "app", então o que eu vou fazer?
+
+[04:00] Vou chegar aqui, vou dizer: "compilador, inclui aí para mim a pasta "app", toda subpasta e qualquer arquivo, tudo que tiver dentro da "app", que for ".ts" eu quero que você converte e jogue na pasta "dist.js"". Eu poderia ter outras partes do sistema, era só colocar vírgula e colocar o nome de outra pasta, mas como eu só tenho "app", vai ficar só "app". "include": ["app/**/*"].
+
+[04:33] Fiz o include, fiz tudo bonito, será que vai funcionar? Esse é o mínimo da configuração do teu TypeScript, do teu compilador que você deve fazer. Vou salvar aqui. Ele vai ler de "app" e vai gerar em "dist". "Mas Flávio, beleza, você fez essa configuração, mas que eu rodo esse compilador, como que eu faço ele funcionar?" Vem comigo, vamos lá para o "package.json" e vamos adicionar um novo script.
+
+[05:00] Cuidado para não mexer em nenhum outro script que já tem o nosso projeto. Vamos colocar um script que eu vou chamar de "compile", eu podia chamar de "mãe Diná", podia chamar de "calopsita", mas eu chamei de "compile". E aqui, o que vou chamar quando chamar esse script, eu vou chamar o tsc. "compile": "tsc".
+
+[05:20] Isso significa que toda vez que eu rodar esse script, o Node Js inteligente vai procurar o módulo do "tsc", do TypeScript Compiler, dentro da pasta no "node_modules" para fazer o trabalho sujo de transformar os arquivos ".ts" para arquivo JavaScript.
+
+[05:40] É muita emoção nessa hora. Eu vou salvar. Meu "TS config" está bonito, olha aí, confere comigo, seu "package.json", vou parar aqui o meu servidor e vou dar npm run compile. Quando esse executo esse código no meu terminal, o TypeScript Compiler executou e deu erros.
+
+[06:00] Se você olhar o erro que teve no meu compilador TypeScript, ele confere com o erro que está sendo exibido no Visual Studio Code, então isso significa que meu compilador não vai continuar enquanto você não resolver esse erro de compilação do seu código. E eu vou resolver agora, ou seja, se você olhar aqui para dentro da pasta "dist", ele gerou o "app" e ele gerou o "negociação.js".
+
+[06:40] Se você olhar, mesmo com o erro que aconteceu, eles têm uma estrutura, se eu comparar o "app.js" com o "app.ts", eles são bem parecidos, mas se eu olho "negociação", você vai ver que o código que saiu aqui é um código completamente diferente do meu código "negociação" que eu escrevi em TypeScript, por quê?
+
+[07:03] Porque o meu TypeScript teve que converter todo aquele código que escrevemos usando o que há de mais moderno em TypeScript para uma linguagem compatível com o ECMAScript 6 e não tínhamos propriedades privadas, então, você não precisa se preocupar, pode ter a certeza que vai funcionar assim que resolvermos os problemas de compilação.
+
+[07:29] Tem uma coisa que precisamos resolver. Primeiro, precisamos resolver o problema de compilação e, segundo, não faz sentido para nós o TypeScript gerar arquivo "js" transformado de arquivo "ts" enquanto houver um problema no compilador do TypeScript. Vamos configurar isso tudo e eu vou fazer mais uma revisão para deixarmos isso bem amarrado.
+
+@@05
+Revisando uso do compilador
+
+Selecione a afirmação correta a respeito do compilador do TypeScript:
+
+Para a instalação do TypeScript, o uso de Node.js é opcional, mas altamente recomendável.
+ 
+Alternativa correta
+O compilador do TypeScript traduz um código escrito em JavaScript para um código compatível com o TypeScript, necessário para que o navegador o compreenda.
+ 
+Na verdade, o código TypeScript precisa ser traduzido/convertido para um código em JavaScript para que seja entendido pelo navegador. Lembre-se que apenas JavaScript é suportado pelo navegador.
+Alternativa correta
+Podemos passar configurações especiais para o compilador através do arquivo tsconfig.json.
+ 
+Alternativa correta! Podemos, por exemplo, especificar para o compilador que os arquivos TypeScript devem ser convertidos para uma versão específica do ECMAScript.
+
+@@6
+Analisando o arquivo tsconfig.json
+
+Em um projeto TypeScript, você tem a seguinte declaração do arquivo tsconfig.json:
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "outDir": "dist/js",    
+    },
+    "include": [
+        "app/**/*"
+    ]
+}
+COPIAR CÓDIGO
+Marque a alternativa correta a respeito dessa configuração:
+
+A propriedade "target" indica para o compilator tsc (TypeScript Compiler) para qual versão do Javascript o código escrito em TypeScript deve ser compilado. Isso significa que o resultado final será arquivos JavaScript sem qualquer referência para a sintaxe do TypeScript.
+ 
+Alternativa correta! O navegador só entende a linguagem JavaScript, desta maneira, todo código TypeScript precisa ser compilado para uma sintaxe compatível.
+Alternativa correta
+A propriedade "outDir" indica para o compilador onde estão os arquivos ".ts" que ele deve compilar.
+ 
+Alternativa correta
+A propriedade "include" indica para o compilador onde os arquivos resultantes da compilação de arquivos ".ts" serão salvos.
+
+@@07
+Aprimorando a configuração
+
+[00:00] Nessa parte, entenderemos como as coisas se encaixam, uma delas, que já expliquei para vocês, é que tudo que está dentro de "app" vai ser compilado de arquivo "ts" para arquivo "js".
+[00:20] E ele vai respeitar a mesma estrutura de árvore, tanto isso é verdade que você vai chegar em "dist" agora, vai apagar a pasta "js", vou executar o compilador de novo, ele vai executar e ele vai gerar a pasta "js > models > app" usando a mesma estrutura de pastas que eu tenho aqui. Se "app" está dentro de "app", meu "app" vai ficar dentro de "js". Se meu "negociação" está dentro de "models" vai ficar dentro de "models".
+
+[00:58] Vimos que o nosso código TypeScript ainda está com problema, significa que rodarmos o nosso servidor, eu parei o compilador, npm run server, se o rodar no meu servidor e carregar a aplicação o código JavaScript que foi gerado lá a partir do meu TypeScript está ferrado, porque o meu TypeScript não está passando, não está compilando, se ele não está compilando não faz sentido gerar um JavaScript a partir de um arquivo TypeScript bichado, com problema.
+
+[01:30] Eu tenho que corrigir isso. Eu também não quero que ele gere arquivos "js" em um enquanto houver problema no meu código.
+
+[01:38] O que vamos fazer? Eu vou parar aqui o meu servidor, vou de novo na pasta "dist > js". Cola em sua cabeça que passa "dist" de "js" até o final do curso, você pode apagar e deletar quantas vezes você quiser, só ela. Apaguei a pasta "dist". O que eu vou fazer agora?
+
+[01:57] Vou lá no meu "tsconfig.json" e vou adicionar mais uma configuração, dentro de compilerOptions, que é noEmitOnError": true.
+
+[02:12] Isso significa que ele não vai gerar um arquivo "js" enquanto seu TypeScript não estiver passando na compilação, isso evita que você gere um arquivo "js" com problema. Vou salvar, salvei. Vou à pasta "js", deletada, executar de novo. Executarei o meu compilador, npn run compile, ele executou.
+
+[02:47] Olha só, falhou, você está vendo pasta "js" aqui? Não, e eu nem quero, eu só quero que gere "js" quando eu tiver certeza que meu arquivo TypeScript está passando. Vamos lá fazer ele passar. Vou clicar aqui em "app.ts", ele não está passando porque o TypeScript é inteligente, ele sabe que essa negociação precisa receber três parâmetros no construtor e você, desenvolvedor, não passou os que estão faltando.
+
+[03:14] Vou dizer que ele está recebendo a data, passar uma quantidade "10", e o valor "100", você ver que instantaneamente o Visual Studio Code diga que o seu código passou na compilação.
+
+[03:28] Vou salvar. Agora, no meu terminal, vou executar o compile. Vamos lá que eu quero ser feliz, TypeScript Compile executo, nenhum erro aqui e quando eu olho ele gerou o arquivo "app.js", que está imprimindo o volume da minha negociação, e dentro de "model" ele gerou esse arquivo verborrágico.
+
+[03:56] Cheio de coisas que não escrevemos, mas que é a transformação do nosso arquivo TypeScript usando o que há de mais moderno na linguagem TypeScript e JavaScript, para torná-lo compatível com uma versão antiga do JavaScript.
+
+[04:11] A pergunta que eu faço é a seguinte: se você vai resolver algum problema no seu código e você vai olhar o arquivo "js" ou "ts"? Você vai olhar o arquivo "ts", porque ele é o código-fonte, o "js" é gerado a partir dele, se você tem que fazer uma correção é no arquivo "ts".
+
+[04:26] Será que está funcionando? Vou voltar lá para o meu navegador, npm run server, vou rodar, abriu, vou olhar o meu "console.log" e estar lá bonito, imprimiu o meu volume, está tudo funcionando. Vemos que o navegador que está carregando são meus arquivos "js".
+
+[04:49] O que tem que estar na nossa cabeça é que arquivo TypeScript fica em um lugar, qualquer alteração que eu vou fazer no meu projeto eu faço nos arquivos "ts", e no final eu compilo e jogo para dentro da pasta "dist" ou qualquer pasta da sua escolha, que é essa parte de distribuição que vai ser acessada pelo navegador.
+
+[05:15] Entre nós, fica chamando esse compilador toda hora que ficarmos alterando um arquivo no projeto não é muito legal e vamos automatizar isso no próximo vídeo.
+
+@@08
+Automatizando a compilação de arquivos
+
+[00:00] Vamos deixar nosso ambiente mais profissional, em que sentido? No sentido de toda vez que eu alterar, bulinar, modificar, mexer nos meus arquivos "ts" que automaticamente o compilador do TypeScript escuta que eu mexi no arquivo e gere o processo de compilação sempre garantindo que a pasta "dist" vai estar atualizada após salvar qualquer arquivo "ts". Como fazemos isso?
+[00:25] Primeiro você vai voltar para o seu terminal, vou parar aqui o meu servidor, vamos lá para o "package.json", existe uma série de scripts aqui, temos um script compile. Eu vou criar aqui um script que eu vou chamar de watch, podia ser calopsita, tico tico, mas eu vou chamar de watch, que é de observar, de ver.
+
+[00:48] Ele vai chamar o compilador TypeScript com parâmetro -w, esse parâmetro -w você já deve imaginar que "w", "wacth", é para o compilador TypeScript ficar monitorando os arquivos.
+
+[01:04] Deixa eu salvar aqui. Recomendo ficar monitorando os arquivos das pastas que você adicionar dentro do include, será que isso vai funcionar? Vou chegar aqui no meu terminal, npm run watch. Quando eu executo esse comando, você vai ver que "Starting compilation in watch mode", ele primeiro dá uma compilada em tudo e depois ele fica olhando se algum arquivo mexeu para que você possa ver na sua aplicação.
+
+[01:39] Se eu chegar agora aqui no "app", eu vou colocar aqui um alert('oi'), vou salvar, fica olhando, salvei, quando eu salvo ele falou que detectou uma mudança e que fez uma compilação incremental. Se eu olho lá agora para pasta "dist > app", o alert estar lá.
+
+[02:02] Vou para dentro de "app.ts", apaguei, salvei, quando eu volto para "app.js", olha lá, o alert não está mais lá. Isso prova que o processo de compilação está acontecendo o tempo todo. Temos um problema aqui, qual é o problema? Nós queremos que esse processo de compilação rode o tempo todo, mas eu também quero rodar o meu servidor web, por que qual é a sacada?
+
+[02:29] A sacada é que toda vez que eu alterar a minha pasta "app", a pasta "dist" vai ser modificada, o meu servidor web, que eu expliquei para vocês no início do curso que ele fica escutando quaisquer mudanças na pasta "dist", vai fazer o refresh no navegador.
+
+[02:48] Eu quero que isso aconteça, eu quero modificar um arquivo "ts", ele vai gerar o arquivo na pasta "dist", quando o meu servidor, o Live Server está disputando qualquer modificação na pasta "dist" ele automaticamente vai fazer o refresh no browser.
+
+[03:02] Olha maravilha, se alterou o arquivo "ts", esquece, o navegador vai fazer o refresh e você vai ter sempre o resultado final da compilação do arquivo TypeScript lá. Para fazer isso, eu preciso fazer o compilador TypeScript e o servidor rodarem ao mesmo tempo. Como eu faço isso?
+
+[03:22] Se você olhar aqui no "package.json" já tem adicionado aqui esse script aqui start, que usa esse módulo que já veio com o nosso projeto que permite que o node execute dois scripts em paralelo. Se você olhar aqui, ele vai executar o npm run watch e o npm run server.
+
+[03:45] Vamos vê-lo em ação? Vou chegar no terminal. Feche o seu navegador para que ele abra de novo, para fazer todo o processo, ficamos mais impressionados ainda. npm run start, é ele que vamos usar até o final do curso. Fiz isso, ele vai executar o compilador TypeScript e meu servidor aqui abriu.
+
+[04:10] Você vê que ele fez duas vezes o refresh, porque ele abriu a primeira vez e depois o TypeScript gerou os arquivos, ele detectou e fez o *refresh. Vamos fazer um teste?
+
+[04:20] Vou chegar agora, vou diminuir essa tela, eu só acredito vendo. Vou chegar lá no "app.ts". Cuidado, fecha todos os arquivos aqui, "js", só deixa aberto o arquivo "ts" porque já aconteceu, pode acontecer com vocês, se vocês forem fazer uma alteração no arquivo "ts", mas estão alterando o arquivo "js". Esquece o "js", o "js" é resultado.
+
+[04:52] Você vai no arquivo "app", olha o que eu vou fazer aqui, alert('oi'), quando eu salvar, o TypeScript vai compilá-lo, jogar na pasta "dist", o meu browser, usando Live Server, vai detectar e fazer refresh. Salvei.
+
+[05:10] Nós conseguimos configurar um ambiente, se você não tem experiência com Angular, React, com Vue JS, conseguimos conseguiu um ambiente bem parecido com o que eles têm dentro da ferramenta de command line deles. Só precisamos relaxar agora e escrever código TypeScript e focar no TypeScript.
+
+[05:47] Com isso, conseguimos chegar aonde que eu queria para dominarmos essa questão do compilador do TypeScript e entendermos ao longo do curso, recursos da linguagem TypeScript.
+
+[05:56] O que é fantástico aqui, já posso mostrar também para dar um gosto, é: se eu escrever "negociação" errado, no Javascript isso ia passar batido, salvei, erro, ele me diz aqui, se você segura o "Ctrl" e clica aqui ele vai para linha direta onde está o erro.
+
+[06:22] Outra coisa: se você escrever o volume errado, escreveu volum, ele está dizendo, "não existe", não existe na definição da classe, tem um erro, e por aí vai.
+
+[06:35] E outra coisa: vamos esclarecer no próximo vídeo por que o nome é TypeScript? A ideia de tipos é muito importante na linguagem TypeScript, vamos entender um pouco no próximo vídeo antes de continuarmos com o projeto, que esse projeto vai se dividir em vários cursos e em cada curso desse vamos dando saltos na linguagem TypeScript.
+
+[07:00] Vamos lá ver essa ideia de tipos e ver como nos beneficiamos disso no próximo vídeo.
+
+@@09
+O modificador private
+
+[00:00] Outra coisa para alinharmos é: para definição de atributos privados da minha classe, eu utilizei a sintaxe mais nova do JavaScript. Só que o TypeScript tem a sua própria sintaxe para definição de atributos privados e é essa que vamos utilizar.
+[00:19] Não há problema nenhum você utilizar a do JavaScript padrão, mas a própria equipe do TypeScript sugere que você utilize o modificador private da própria linguagem TypeScript por questões de compatibilidade, e por aí vai.
+
+[00:33] O que precisamos fazer? Primeira coisa é o seguinte: precisamos remover essa tralha, porque isso daqui é sintaxe do mais moderno do JavaScript. Mas quando removemos essa tralha, temos um problema, porque um getter não pode ter o mesmo nome de uma propriedade da classe. Entendeu? Esse getter aqui não pode ter um nome da propriedade encapsulado dentro da sua classe. O que eu vou fazer? Eu vou colocar um underline.
+
+[01:19] No getter, você não precisa saber que a propriedade que guarda valor é underline. Esse underline é uma convenção antiga do JavaScript para indicar que algo é privado, que você não deveria acessar isso fora do domínio da sua classe. Fiz isso, está aí o meu código. Mas do jeito que está, o que vai acontecer?
+
+[01:39] Toda vez que eu criar uma negociação ou a propriedade data vai ser acessível. Se eu chegar agora aqui, salvei o meu código, voltei para cá, para o "app", criei uma "negociação", se chegar para fazer negociação._data eu consigo alterar a data. Não pode, regredimos. Uma negociação após criada, não pode ter nenhuma das suas propriedades internas, data, quantidade e numero, alteradas.
+
+[02:12] O que eu faço? Eu coloco private, o modificador private. Salvei. Quando eu vou em "app.ts", eu estou tentando acessar o data e diz que data é privado e não pode ser acessado por fora, ninguém pode atribuir, só a própria classe.
+
+[02:36] O mais bacana é que se agora eu uso o autocomplete eu nem vejo o _ data como um valor válido no autocomplete, porque ela é privada, ela não tem acesso a ela. Essa é uma forma que você vai ver muito comum em projetos, em Angular, projetos com Vue JS, que usa TypeScript, inclusive React, que teve integração com TypeScript, essa sintaxe do private.
+
+[03:07] Uma coisa legal: se eu salvo isso daqui e olho lá para saber o que o TypeScript gerou, eu vejo que ele gerou sem nada, sem aquela verborragia que tínhamos antes, porque antes para ele emular aquele comportamento do JavaScript, ele tinha que escrever um código completamente diferente.
+
+[03:32] Você vai pensar: "Flávio, mas nada aqui está me garantindo em runtime que alguém possa alterar a sua negociação." Isso é verdade. O que o TypeScript te garante é que no fluxo do seu código você não vai ter nenhuma situação que alguém vai estar alterando uma propriedade privada ou que não deveria poder estar alterando.
+
+[03:55] O código que vai ser gerado no navegador ele continua sendo um código desprovido de todos os recursos do TypeScript, nada impede de alguém abrir o seu console do navegador, tentar alterar o seu código, que ele vai conseguir.
+
+[04:08] O que você está garantido é que na hora que você gerar o seu código para o navegador, o fluxo do seu código que vai rodar ninguém durante a compilação do seu código pode chegar lá e escrever uma sintaxe, como essa agora, chegar lá no TypeScript, vou lá em "app.ts", negociação._data = new Date(), sabemos que ele nunca vai gerar um arquivo JavaScript com essa instrução, o TypeScript bloqueia.
+
+[04:43] Por mais que o código no final seja gerado um código em JavaScript desprovido de todos os recursos que vimos aqui do TypeScript, você está garantindo que durante o runtime você tem 100% de certeza que ninguém vai fazer, vai cometer uma gafe de acessar propriedades que não existem ou modificar o estado de uma classe sua. Está bom.
+
+@@10
+Identificando erro de compilação
+
+O TypeScript é um superset da ES2015, ou seja, além de suportar os recursos da linguagem desta versão, adiciona outros. Um exemplo é o suporte ao modificador private.
+Marque a opção na qual há um erro de compilação do TypeScript de acesso indevido a uma propriedade privada.
+
+class Pessoa {
+    
+    private _nome;
+    _idade;
+
+    constructor(nome, idade) {
+
+        this._nome = nome;
+        this._idade = idade;
+    }
+}
+
+let pessoa = new Pessoa('Danilo', 30);
+pessoa._idade = 20;
+ 
+Alternativa correta
+class Pessoa {
+    
+    private nome;
+    idade;
+
+    constructor(nome, idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+}
+
+let pessoa = new Pessoa('Barney', 18);
+pessoa.nome = 'Martin';
+ 
+Alternativa correta! Há um erro de compilação. A propriedade nome é declarada com o modificador private, dessa forma, apenas métodos da própria classe podem acessá-la.
+Alternativa correta
+class Pessoa {
+    
+    private nome;
+
+    constructor(nome, idade) {
+        this._nome = nome;
+    }
+}
+
+let pessoa = new Pessoa('Milan', 25);
+pessoa._idade = 10;
+ 
+Alternativa errada! Há um erro de compilação no código, mas que não é devido a um acesso privado à propriedade _idade. O erro é simplesmente por ela não existir.
+
+@@11
+Revisão
+
+[00:00] Vamos fazer uma revisão. Nós vimos que precisamos baixar o compilador TypeScript através do node do “npn”, após instalado não é suficiente só baixá-lo, precisamos criar o arquivo "tsconfig.json", o arquivo centro nervoso do compilador. Toda vez que você executar esse compilador, ele vai ler esse arquivo para saber o que ele tem que fazer.
+[00:22] Em se tratando o que ele tem que fazer, o que precisamos dizer para o compilador? Precisamos dizer que onde estar a pasta com os arquivos TypeScript que ele vai ter que compilar, todos os nossos arquivos TypeScript ficaram dentro da pasta "app", se você escrever algum arquivo "ts" fora de "app", você não está seguindo o fluxo do treinamento. Está bom?
+
+[00:42] Precisamos dizer através de CompilerOptions onde os arquivos compilados serão gerados. Estamos dizendo que qualquer arquivo modificado na pasta 'app" vai ser gerado na pasta "dist" com a extensão "js" compilado transformado para JavaScript.
+
+[01:01] Também colocamos noEmitOnError para dizer que se o arquivo TypeScript que eu estou salvando tiver um problema de compilação, que não faz sentido gerar um arquivo "js" para ele, então nada vai acontecer, nenhum arquivo "js" vai ser gerado. Está bom?
+
+[01:17] Uma outra coisa que vimos no projeto é que quando eu vou lá no meu "package.json" criamos dois scripts, o compile e o watch. O compile quando executo vai compilar, vai transformar meus arquivos "ts" para JavaScript na devida pasta, mas só que ficar rodando esse comando toda hora não é muito legal, por isso criamos o watch.
+
+[01:44] Esse watch vai ficar escutando, qualquer modificação dentro da pasta "dist" e se você modificou qualquer arquivo "ts" lá dentro automaticamente ele vai gerar o arquivo dentro da pasta "js". Tudo maravilhoso, mas vimos que precisamos compartilhar a pasta "dist" no navegador utilizando o nosso Live Server e, ao mesmo tempo, precisamos reexecutar o compilador do TypeScript.
+
+[02:10] Como conseguimos isso? Executando o comando start, porque esse comando start vai executar o npn run watch combinado com o do server. É tudo maravilhoso, vamos para o abraço, porque qualquer alteração feita no meu arquivo "ts" o compilador TypeScript vai escutar, vai gravar na pasta "dist".
+
+[02:30] E o Live Server qualquer modificação na pasta "dist" feita, ele vai fazer o refresh no navegador, então conseguimos alterando em um único lugar todo nosso pipeline vai ser executado e o resultado será refletido no navegador.
+
+[02:46] Nós vimos também que na hora que declaramos arquivos TypeScript, como o nome diz, o TypeScript vai gerar um monte de checagem no nosso código e uma das checagens que nós vimos é que se eu omito um parâmetro no construtor da minha classe ele vai me indicar que tem um erro, então, eu como programador, vou lembrar lá e vou verificar qual parâmetro que eu tenho que passar.
+
+[03:07] Vimos que ele também me permite ter o auto complete mais apurado, isso significa que quando eu clico .data eu consigo ter esse auto complete das propriedades da minha classe.
+
+[03:22] Outra coisa que vimos é que o TypeScript me permite, por exemplo, se eu cometo uma gafe na hora de digitar, como ele sabe que estou utilizando tipo "negociação", ele sabe que você tem que escrever o correto, que não existe, não tem ninguém declarado aqui para nós.
+
+[03:39] Também nós vimos que ao definir o nosso modelo, que podemos abdicar do modo privado do JavaScript usando a sintaxe tralha e nós substituímos pela instrução private do TypeScript, isso significa que se eu estou utilizando o meu auto complete, a própria IDE é integrada com o TypeScript, não vai sugerir os atributos aqui como private, adotado como private.
+
+[04:08] Se eu removo esse private e salvo, volto lá, ele vai aparecer aqui porque não disse que eu quero esconder ele do desenvolvedor, que eu quero tornar ele privado.
+
+[04:21] Se você está curioso para saber qual é o tipo dele, quando você não coloca nada é mesma coisa que public, tem um bônus aqui. Se você clicar agora aqui, todo mundo que é public aparece aqui para você, só que o TypeScript me permiti omitir o tipo public e inferir que é public quando você não define nenhum modificador de acesso.
+
+[04:49] Temos tudo no lugar no entendimento embrionário, básico de TypeScript para podermos agora construir nossa aplicação e, à medida que vamos construindo nossa aplicação, vamos vendo qual recurso do TypeScript pode ajudar a escrever um código lindo, sem defeito, garantido que vai rodar sem problema durante a runtime. Está bom? Vejo vocês no próximo capítulo.
+
+@@12
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+Continue com os seus estudos, e se houver dúvidas, não hesite em recorrer ao nosso fórum!
+
+@@13
+O que aprendemos?
+
+Nesta aula, aprendemos sobre:
+Download do TypeScript;
+Configuração do compilador e papel do tsconfig.json;
+Integração com scripts do Node.js;
+Modificadores de acesso private e public;
+Benefícios iniciais da linguagem TypeScript.
